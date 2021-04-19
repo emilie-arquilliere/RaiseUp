@@ -1,2 +1,3 @@
 # RaiseUp
-Projet créé dans le cadre des cours au sein de mon école
+Application mobile de développement personnel avec connexion à un compte, accès à des podcasts, des forums ou des évenements.
+En cours de développement
