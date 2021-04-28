@@ -1,27 +1,54 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { Image } from "react-native";
+import { StyleSheet, Text, View, ImageBackground } from "react-native";
+import PageSubitle from "../component/PageSubtitle";
 
-export default function ProfilPage({navigation}) {
+export default function ProfilPage({ navigation }) {
   return (
     <View>
-      <Text onPress={() => navigation.navigate('Podcasts')} style={styles.item}>Vers podcasts</Text>
-      <Text onPress={() => navigation.navigate('Forum')} style={styles.item}>Vers forum</Text>
-      <Text onPress={() => navigation.navigate('Evenement')} style={styles.item}>Vers events</Text>
-      <Text onPress={() => navigation.navigate('Accueil')} style={styles.item}>Vers accueil</Text>
+      <ImageBackground
+        source={require("../assets/images/fond_noir.png")}
+        style={styles.fondNoir}
+      >
+        <Text style={styles.title}>Profil</Text>
+        <View>
+          <Image />
+          <Text>Blabla</Text>
+        </View>
+        <Image />
+        <View>
+          <PageSubitle content="Paramètres du compte" />
+          <Text>Changer le mot de passe</Text>
+          <Text>Mes informations personnelles</Text>
+          <Text>Politique de confidentialité</Text>
+          <Text>Conditions générales d'utilisation</Text>
+          <Text>Conditions générales de vente</Text>
+        </View>
+      </ImageBackground>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    marginTop: 40,
+    justifyContent: "center",
+    width: "100%",
+    height: "100%",
+  },
+  title: {
+    position: "absolute",
+    top: "13%",
+    fontSize: 20,
   },
   item: {
-    textAlign: 'center',
+    textAlign: "center",
     padding: 10,
     fontSize: 78,
+  },
+  fondNoir: {
+    resizeMode: "cover",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

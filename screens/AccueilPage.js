@@ -1,27 +1,48 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import IconProfil from '../component/IconProfil';
+import PageTitle from '../component/PageTitle';
+import PageSubtitle from '../component/PageSubtitle';
 
 export default function AccueilPage({navigation}) {
+  const prenom = 'Marie';
+  const theme = 'La confiance en soi';
   return (
-    <View>
-      <Text onPress={() => navigation.navigate('Podcasts')} style={styles.item}>Vers podcasts</Text>
-      <Text onPress={() => navigation.navigate('Forum')} style={styles.item}>Vers forum</Text>
-      <Text onPress={() => navigation.navigate('Evenement')} style={styles.item}>Vers events</Text>
-      <Text onPress={() => navigation.navigate('Profil')} style={styles.item}>Vers profil</Text>
+    <View style={styles.container}>
+      <ImageBackground source={require("../assets/images/fond_noir.png")} style={styles.fondNoir}>
+        <IconProfil navigation={navigation}/>
+        <PageTitle content={'Hello '+prenom}/>
+        <Text>"Se donner du mal pour les petites choses, c'est parvenir aux grandes avec le temps." - Samuel Beckett </Text>
+        <View style={styles.theme}>
+          <Text>Le thème de la semaine</Text>
+          <Text>{theme}</Text>
+        </View>
+        <PageSubtitle content='Les nouveautés'/>
+        <FlatList containerStyle={{backgroundColor:'red'}}/>
+        <PageSubtitle content='Le suivi de ton évolution'/>
+        <Text>Blablabla</Text>
+        <PageSubtitle content='Les exercices de ton coach'/>
+        <View style={styles.exercice}>
+          <Text>Blablabla</Text>
+        </View>
+      </ImageBackground>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    marginTop: 40,
+  fondNoir:{
+    resizeMode:'cover',
+    height:'100%',
+    alignItems:'center'
   },
-  item: {
-    textAlign: 'center',
-    padding: 10,
-    fontSize: 78,
+  theme:{
+    position:'relative',
+    width:'80%',
+    backgroundColor:'#D3FCF7'
   },
+  exercice:{
+
+  }
 });

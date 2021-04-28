@@ -4,6 +4,7 @@ import PodcastsPage from "../screens/PodcastsPage";
 import AccueilPage from "../screens/AccueilPage";
 import ForumPage from "../screens/ForumPage";
 import EventPage from "../screens/EventPage";
+import ProfilPage from '../screens/ProfilPage';
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {faHome, faPodcast, faCalendarAlt, faComments} from '@fortawesome/free-solid-svg-icons';
 
@@ -24,9 +25,11 @@ export default function Menu() {
                         iconName = faComments;
                     } else if (route.name === 'Event') {
                         iconName = faCalendarAlt;
+                    }else{
+                        iconName = faHome;
                     }
 
-                    return <FontAwesomeIcon icon={iconName} color={'white'} />;
+                    return <FontAwesomeIcon icon={iconName} color={'white'} size={25} />;
                 },
             })}
             tabBarOptions={{
@@ -40,5 +43,6 @@ export default function Menu() {
             <Tab.Screen name="Podcasts" component={PodcastsPage}/>
             <Tab.Screen name="Forum" component={ForumPage}/>
             <Tab.Screen name="Event" component={EventPage}/>
+            <Tab.Screen name="Profil" component={ProfilPage} options={{tabBarButton:()=>null}} />
         </Tab.Navigator>
     )}

@@ -1,13 +1,10 @@
 import React from 'react';
-import AccueilPage from '../screens/AccueilPage';
 import FirstPage from '../screens/FirstPage';
 import ConnexionPage from '../screens/ConnexionPage';
 import InscriptionPage from '../screens/InscriptionPage';
-import ForumPage from '../screens/ForumPage';
-import EventPage from '../screens/EventPage';
 import ProfilPage from '../screens/ProfilPage';
-import PodcastsPage from '../screens/PodcastsPage';
 import Menu from '../component/Menu';
+import IconProfil from '../component/IconProfil';
 
 import { createStackNavigator } from '@react-navigation/stack';
 

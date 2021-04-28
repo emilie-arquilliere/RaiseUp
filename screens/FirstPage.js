@@ -4,9 +4,9 @@ import { StyleSheet, Text, View, Image, ImageBackground } from 'react-native';
 export default function FirstPage({navigation}) {
   return (
     <View style={styles.container}>
-      <ImageBackground source={require("../images/palme_doree.jpg")} style={styles.fondPalme}>
-        <ImageBackground source={require("../images/fond_noir.png")} style={styles.fondNoir}>
-          <Image source={require('../images/logo_raise_up.png')} style={styles.logo}/>
+      <ImageBackground source={require("../assets/images/palme_doree.jpg")} style={styles.fondPalme}>
+        <ImageBackground source={require("../assets/images/fond_noir.png")} style={styles.fondNoir}>
+          <Image source={require('../assets/images/raise_up_logo_FB.png')} style={styles.logo}/>
           <View style={styles.viewText}>
             <Text style={styles.textHaut}>
               Bienvenue sur l'application RaiseUp.
@@ -16,7 +16,7 @@ export default function FirstPage({navigation}) {
               Nous pouvons même te proposer un coach pour aller plus loin dans ton évolution.
             </Text>
             <Text style={styles.ligneBas}>Merci de nous faire confiance pour ton évolution,</Text>
-            <Image source={require('../images/team_raise_up.png')} style={styles.signature}  />
+            <Image source={require('../assets/images/team_raise_up.png')} style={styles.signature}  />
           </View>
           <View style={styles.viewBtnNav}>
             <Text onPress={() => navigation.navigate('Connexion')} style={styles.btnNav}>Je veux m'élever !</Text>
