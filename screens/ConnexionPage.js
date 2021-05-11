@@ -22,7 +22,7 @@ export default function ConnexionPage({ navigation }) {
 
   const connect = () => {
     axios
-      .post("http://172.20.10.:3000/connect", login)
+      .post("http://172.20.10.5:3000/connect", login)
       .then((res) => {
         if (res.ok === 1) {
           navigation.navigate("Menu");
