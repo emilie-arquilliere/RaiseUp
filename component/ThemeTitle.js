@@ -7,9 +7,8 @@ export default function PageTitle({ content }) {
 
 const styles = StyleSheet.create({
   title: {
-    position: "absolute",
-    top: "13%",
-    left: "10%",
-    fontSize: 20,
+    justifyContent: "center",
+    color: "white",
+    fontSize: 30,
   },
 });

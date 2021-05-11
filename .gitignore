@@ -13,3 +13,4 @@ web-build/
 .DS_Store
 
 RaiseUp_back/node_modules/
+RaiseUp_back/.env
