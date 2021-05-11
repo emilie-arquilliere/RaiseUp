@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { CheckBox } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import axios from "axios";
+import axios from "react-native-axios";
 
 export default function ConnexionPage({ navigation }) {
   const [email, setEmail] = React.useState(null);
@@ -22,7 +22,7 @@ export default function ConnexionPage({ navigation }) {
 
   const connect = () => {
     axios
-      .post("http://192.168.1.103:3000/connect", login)
+      .post("http://172.20.10.5:3000/connect", login)
       .then((res) => {
         if (res.ok === 1) {
           navigation.navigate("Menu");
