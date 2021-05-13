@@ -3,6 +3,8 @@ const app = express();
 const { Client } = require("pg");
 const joi = require("joi");
 const bcrypt = require("bcrypt");
+const fs = require("fs");
+const { exit } = require("process");
 
 app.use(express.json());
 app.use(express.static("public"));
@@ -10,17 +12,26 @@ app.use(express.static("public"));
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-const connectionString = process.env.DATABASE_URL;
+/*const connectionString = process.env.DATABASE_URL;
 const client = new Client({
   connectionString,
   ssl: { rejectUnauthorized: false },
 });
-client.connect();
+client.connect();*/
+
+const readUsers = () => JSON.parse(fs.readFileSync("./users.json").toString());
+const readQuestions = () =>
+  JSON.parse(fs.readFileSync("./questions.json").toString());
+
+app.get("/users", (req, res) => {
+  const users = readUsers();
+  return res.json(users);
+});
 
 //chemin qui connecte le user
 app.post("/connect", (req, res) => {
   console.log("Salut les coupains");
-  client.query(
+  /*client.query(
     "SELECT email, password FROM users WHERE email='" + req.body.email + "'",
     (err, result) => {
       if (err) {
@@ -58,7 +69,47 @@ app.post("/connect", (req, res) => {
         return res.json({ ok: 0, message: "Email ou mot de passe invalide" });
       }
     }
-  );
+  );*/
+  const users = readUsers();
+  let index = 0;
+  if (users.length) {
+    //on cherche si l'email existe et à quelle position
+    users.forEach((user, i) => {
+      if (req.body.email === user.email) {
+        index = i;
+      }
+    });
+    //s'il existe on vérifie le mot de passe
+    console.log(index);
+    if (index > 0) {
+      bcrypt.compare(
+        req.body.password,
+        users[index].password,
+        (err, result_hash) => {
+          if (err) {
+            return res.json({ ok: 0, message: err });
+          } else {
+            if (result_hash) {
+              return res.json({
+                ok: 1,
+                message: "Connexion effectuée avec succès",
+              });
+            } else {
+              return res.json({
+                ok: 0,
+                message: "Email ou mot de passe invalide",
+              });
+            }
+          }
+        }
+      );
+    } else {
+      return res.json({ ok: 0, message: "Email ou mot de passe invalide" });
+    }
+    //return res.json({ ok: 0, message: "Email ou mot de passe invalide" });
+  } else {
+    res.json({ ok: 0, message: "Email ou mot de passe invalide" });
+  }
 });
 
 //chemin qui inscrit le user
@@ -122,10 +173,11 @@ app.post("/register", (req, res) => {
   const { error } = schema.validate(req.body);
 
   if (error) {
-    return res.json({ ok: 0, message: error });
+    console.log(error.message);
+    return res.json({ ok: 0, message: error.message });
   } else {
     //si tous les champs sont ok, on fait un test d'unicité sur l'email
-    client.query(
+    /*client.query(
       "SELECT 1 as mail FROM users WHERE email='$1'",
       [req.body.email],
       (err, result) => {
@@ -165,7 +217,39 @@ app.post("/register", (req, res) => {
           });
         }
       }
-    );
+    );*/
+    const users = readUsers();
+    //on vérifie si l'email est déjà utilisé
+    if (users.some((user) => user.email === req.body.email)) {
+      //si oui on renvoi un message d'erreur
+      return res.json({ ok: 0, message: "Cet email est déjà utilisé" });
+    } else {
+      //sinon, on crypte le mot de passe
+      bcrypt.hash(req.body.password, 10, (err, hash) => {
+        if (err) {
+          return res.json({ ok: 0, message: err });
+        } else {
+          //si tous les tests sont passé on enregistre avec le mot de passe crypter
+          const id =
+            users.length > 0
+              ? Math.max(...users.map((user) => user.id)) + 1
+              : 1;
+          const newUser = {
+            id: id,
+            lastName: req.body.lastname.toUpperCase(),
+            firstName: req.body.firstname,
+            email: req.body.email,
+            password: hash,
+            isAbonne: 0,
+          };
+          // Ajoute le nouveau user dans le tableau d'users
+          users.push(newUser);
+          // Ecris dans le fichier pour insérer la liste des users
+          fs.writeFileSync("./users.json", JSON.stringify(users, null, 4));
+          res.json({ ok: 1, message: "L'utilisateur a bien été ajouté" });
+        }
+      });
+    }
   }
 });
 
