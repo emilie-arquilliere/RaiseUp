@@ -1,5 +1,5 @@
 let UsersController = {};
-const UsersService = require("./services/users.service");
+const UsersService = require("../services/users.service");
 
 /*=====FUNCTIONS=====*/
 //register function

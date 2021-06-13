@@ -1,6 +1,9 @@
 let ThemesDAO = {};
 const { Client } = require("pg");
 
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 const connectionString = process.env.DATABASE_URL;
 const client = new Client({
   connectionString,

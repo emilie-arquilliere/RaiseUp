@@ -4,6 +4,9 @@ const bcrypt = require("bcrypt");
 const joi = require("joi");
 const jwt = require("jsonwebtoken");
 
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 const connectionString = process.env.DATABASE_URL;
 const client = new Client({
   connectionString,
@@ -93,11 +96,12 @@ UsersDAO.checkData = (body, callback) => {
 
   const { error } = schema.validate(body);
   if (error) {
-    callback(null, error);
+    console.error(error);
   } else {
     callback(null, 1);
   }
 };
+
 //uniqueness function on email
 UsersDAO.uniqueness = (email, callback) => {
   client.query(
@@ -105,11 +109,11 @@ UsersDAO.uniqueness = (email, callback) => {
     [email],
     (err, res) => {
       //erreur lors de la requête
-      if (err) callback(null, err);
+      if (err) console.error(err);
       //l'email est déjà utilisé
       else if (res.mail) callback(null, 1);
       //l'email n'est pas utilisé
-      else callback(null, 0);
+      else callback(null);
     }
   );
 };
@@ -131,7 +135,7 @@ UsersDAO.connect = (body, callback) => {
             result.rows[0].password,
             (err, result_hash) => {
               if (err) {
-                return res.json({ ok: 0, message: err });
+                callback(null, err);
               } else {
                 if (result_hash) {
                   return res.json({
@@ -144,10 +148,7 @@ UsersDAO.connect = (body, callback) => {
                     ),
                   });
                 } else {
-                  return res.json({
-                    ok: 0,
-                    message: "Email ou mot de passe invalide",
-                  });
+                  callback(null, 0);
                 }
               }
             }
@@ -156,7 +157,7 @@ UsersDAO.connect = (body, callback) => {
       }
       //si on a pas de résultat c'est que l'email n'existe pas en BDD
       else {
-        return res.json({ ok: 0, message: "Email ou mot de passe invalide" });
+        callback(null, 0);
       }
     }
   );

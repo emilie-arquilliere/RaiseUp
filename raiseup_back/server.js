@@ -39,7 +39,7 @@ app.post("/podcasts", auth, PodcastsController.findAll);
 app.post("/podcasts/:idPodcast", auth, PodcastsController.findOne);
 
 /*======THEMES FUNCTION======*/
-app.post("/themes", auth, ThemesController.findOne);
+app.post("/themes", ThemesController.findOne);
 
 //lancement du serveur
 const port = process.env.PORT || 3000;
