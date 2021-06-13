@@ -1,16 +1,2 @@
-node_modules/**/*
-.expo/*
-npm-debug.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-*.orig.*
-web-build/
-
-# macOS
-.DS_Store
-
-RaiseUp_back/node_modules/
-RaiseUp_back/.env
+node_modules 
+raiseup_back/.env

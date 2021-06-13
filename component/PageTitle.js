@@ -1,7 +1,16 @@
 import React from "react";
 import { StyleSheet, Text } from "react-native";
+import { useFonts } from "expo-font";
 
 export default function PageTitle({ content }) {
+  const [loaded] = useFonts({
+    CormorantGaramond: require("../assets/font/CormorantGaramond-Bold.ttf"),
+  });
+
+  if (!loaded) {
+    return null;
+  }
+
   return <Text style={styles.title}>{content}</Text>;
 }
 
@@ -11,5 +20,7 @@ const styles = StyleSheet.create({
     top: "13%",
     left: "10%",
     fontSize: 20,
+    fontWeight: "bold",
+    fontFamily: "CormorantGaramond",
   },
 });

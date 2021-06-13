@@ -3,7 +3,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import PodcastsPage from "../screens/PodcastsPage";
 import AccueilPage from "../screens/AccueilPage";
 import ForumPage from "../screens/ForumPage";
-import EventPage from "../screens/EventPage";
+import CreateSubject from "../component/CreateSubject";
+import PlayPodcast from "../component/PlayPodcast";
+import ForumSubject from "../component/ForumSubject";
 import ProfilPage from "../screens/ProfilPage";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -47,10 +49,24 @@ export default function Menu() {
       <Tab.Screen name="Accueil" component={AccueilPage} />
       <Tab.Screen name="Podcasts" component={PodcastsPage} />
       <Tab.Screen name="Forum" component={ForumPage} />
-
       <Tab.Screen
         name="Profil"
         component={ProfilPage}
+        options={{ tabBarButton: () => null }}
+      />
+      <Tab.Screen
+        name="CreateSubject"
+        component={CreateSubject}
+        options={{ tabBarButton: () => null }}
+      />
+      <Tab.Screen
+        name="PlayPodcast"
+        component={PlayPodcast}
+        options={{ tabBarButton: () => null }}
+      />
+      <Tab.Screen
+        name="ForumSubject"
+        component={ForumSubject}
         options={{ tabBarButton: () => null }}
       />
     </Tab.Navigator>

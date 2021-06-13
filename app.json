@@ -19,8 +19,13 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSAllowsArbitraryLoads": {
-            "NSAllowsArbitraryLoads": true
+        "NSAppTransportSecurity": {
+            "NSAllowsArbitraryLoads": true,
+            "NSExceptionDomains":{
+              "http://172.20.10.5":{
+                "NSTemporaryExceptionAllowsInsecureHTTPLoads":true
+              }
+            }
         }
       }
     },

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,9 +7,9 @@ import {
   Image,
   TextInput,
 } from "react-native";
-import { CheckBox } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import axios from "react-native-axios";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useFonts } from "expo-font";
 
 export default function ConnexionPage({ navigation }) {
   const [email, setEmail] = React.useState(null);
@@ -20,80 +20,93 @@ export default function ConnexionPage({ navigation }) {
     password: password,
   };
 
-  const connect = () => {
-    axios
-      .post("http://172.20.10.5:3000/connect", login)
-      .then((res) => {
-        if (res.ok === 1) {
-          navigation.navigate("Menu");
-        } else {
-          alert(res.message);
-        }
-      })
-      .catch((e) => console.log(e));
+  const connect = async () => {
+    try {
+      let response = await fetch("http://172.30.92.123:3000/connect", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(login),
+      });
+      let json = await response.json();
+      if (json.ok === 1) {
+        navigation.navigate("Menu");
+      } else {
+        alert(json.message);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
+
+  const [loaded] = useFonts({
+    CormorantGaramond: require("../assets/font/CormorantGaramond-Bold.ttf"),
+  });
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <View>
       <ImageBackground
-        source={require("../assets/images/palme_NB.jpg")}
+        source={require("../assets/images/fleur_NB.png")}
         style={styles.fondPalme}
       >
         <ImageBackground
           source={require("../assets/images/fond_noir.png")}
           style={styles.fondNoir}
         >
-          <Image
-            source={require("../assets/images/raise_up_logo_FB.png")}
-            style={styles.logo}
-          />
-          <View style={styles.content}>
-            <Text style={styles.titre}>Connexion</Text>
-            <Text style={styles.item}>Email</Text>
-            <TextInput
-              placeholder="email@address.com"
-              style={styles.input}
-              onChangeText={(text) => setEmail(text)}
-              value={email}
-            />
-            <Text style={styles.item}>Mot de passe</Text>
-            <TextInput
-              placeholder="**********"
-              style={styles.input}
-              onChangeText={(text) => setPassword(text)}
-              secureTextEntry={true}
-              value={password}
-            />
-            <CheckBox title="Se souvenir de moi" style={styles.item} />
-            <TouchableOpacity
-              style={styles.viewBtnNavContent}
-              onPress={() => connect()}
+          <View style={{ flex: 1, width: "100%" }}>
+            <KeyboardAwareScrollView
+              contentContainerStyle={{
+                width: "100%",
+                height: "100%",
+                flex: 1,
+                alignItems: "center",
+              }}
             >
-              <Text style={styles.btnNav}>Connexion</Text>
-            </TouchableOpacity>
-            <Text style={{ textAlign: "center" }}>
-              Nouveau sur l'application ? C'est par ici :
-            </Text>
-            <TouchableOpacity
-              style={styles.viewBtnNavContent}
-              onPress={() => navigation.navigate("Inscription")}
-            >
-              <Text style={styles.btnNav}>Je m'inscris</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.viewBtnNav}>
-            <Text
-              onPress={() => navigation.navigate("Menu")}
-              style={styles.btnNav}
-            >
-              Connexion avec Facebook
-            </Text>
-            <Text
-              onPress={() => navigation.navigate("Menu")}
-              style={styles.btnNav}
-            >
-              Connexion avec Gmail
-            </Text>
+              <Image
+                source={require("../assets/images/logo_raise_up.png")}
+                style={styles.logo}
+              />
+              <View style={styles.content}>
+                <Text style={styles.titre}>Connexion</Text>
+                <Text style={styles.item}>Email</Text>
+                <TextInput
+                  placeholder="email@address.com"
+                  style={styles.input}
+                  onChangeText={(text) => setEmail(text)}
+                  value={email}
+                />
+                <Text style={styles.item}>Mot de passe</Text>
+                <TextInput
+                  placeholder="**********"
+                  style={styles.input}
+                  onChangeText={(text) => setPassword(text)}
+                  secureTextEntry={true}
+                  value={password}
+                />
+
+                <TouchableOpacity
+                  style={styles.viewBtnNavContent}
+                  onPress={() => connect()}
+                >
+                  <Text style={styles.btnNavContent}>Connexion</Text>
+                </TouchableOpacity>
+                <Text style={{ textAlign: "center" }}>
+                  Nouveau sur l'application ? C'est par ici :
+                </Text>
+                <TouchableOpacity
+                  style={styles.viewBtnNavContent}
+                  onPress={() => navigation.navigate("Inscription")}
+                >
+                  <Text style={styles.btnNavContent}>Je m'inscris</Text>
+                </TouchableOpacity>
+              </View>
+            </KeyboardAwareScrollView>
           </View>
         </ImageBackground>
       </ImageBackground>
@@ -116,10 +129,11 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
+    width: "100%",
   },
   logo: {
-    resizeMode: "contain",
-    height: "19%",
+    resizeMode: "cover",
+    height: "20%",
     position: "absolute",
     top: "5%",
     width: "100%",
@@ -137,7 +151,9 @@ const styles = StyleSheet.create({
   },
   titre: {
     textAlign: "center",
-    fontSize: 20,
+    fontSize: 25,
+    marginTop: 10,
+    fontFamily: "CormorantGaramond",
   },
   input: {
     borderColor: "#000",
@@ -156,6 +172,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     width: "80%",
     left: 25,
+    marginTop: 20,
   },
   viewBtnNav: {
     position: "absolute",
@@ -166,6 +183,15 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   btnNav: {
+    overflow: "hidden",
+    borderRadius: 25,
+    backgroundColor: "#BD7B49",
+    textAlign: "center",
+    padding: 15,
+    margin: 10,
+    color: "white",
+  },
+  btnNavContent: {
     overflow: "hidden",
     borderRadius: 25,
     backgroundColor: "#D3FCF7",

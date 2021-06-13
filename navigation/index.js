@@ -4,7 +4,6 @@ import ConnexionPage from "../screens/ConnexionPage";
 import InscriptionPage from "../screens/InscriptionPage";
 import ProfilPage from "../screens/ProfilPage";
 import Menu from "../component/Menu";
-import CreateSubject from "../component/CreateSubject";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -18,7 +17,6 @@ export default function MainNavigator() {
       <Stack.Screen name="Connexion" component={ConnexionPage} />
       <Stack.Screen name="Inscription" component={InscriptionPage} />
       <Stack.Screen name="Profil" component={ProfilPage} />
-      <Stack.Screen name="CreateSubject" component={CreateSubject} />
     </Stack.Navigator>
   );
 }
