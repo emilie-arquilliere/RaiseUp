@@ -1,10 +1,9 @@
 const express = require("express");
 const app = express();
-const { Client } = require("pg");
-const joi = require("joi");
-const bcrypt = require("bcrypt");
+//const { Client } = require("pg");
+//const bcrypt = require("bcrypt");
+//const joi = require("joi");
 const fs = require("fs");
-const { exit } = require("process");
 
 app.use(express.json());
 app.use(express.static("public"));
@@ -19,19 +18,9 @@ const client = new Client({
 });
 client.connect();*/
 
-const readUsers = () => JSON.parse(fs.readFileSync("./users.json").toString());
-const readQuestions = () =>
-  JSON.parse(fs.readFileSync("./questions.json").toString());
-
-app.get("/users", (req, res) => {
-  const users = readUsers();
-  return res.json(users);
-});
-
 //chemin qui connecte le user
 app.post("/connect", (req, res) => {
-  console.log("Salut les coupains");
-  /*client.query(
+  client.query(
     "SELECT email, password FROM users WHERE email='" + req.body.email + "'",
     (err, result) => {
       if (err) {
@@ -69,8 +58,8 @@ app.post("/connect", (req, res) => {
         return res.json({ ok: 0, message: "Email ou mot de passe invalide" });
       }
     }
-  );*/
-  const users = readUsers();
+  );
+  /*const users = readUsers();
   let index = 0;
   if (users.length) {
     //on cherche si l'email existe et à quelle position
@@ -109,7 +98,7 @@ app.post("/connect", (req, res) => {
     //return res.json({ ok: 0, message: "Email ou mot de passe invalide" });
   } else {
     res.json({ ok: 0, message: "Email ou mot de passe invalide" });
-  }
+  }*/
 });
 
 //chemin qui inscrit le user
@@ -177,11 +166,13 @@ app.post("/register", (req, res) => {
     return res.json({ ok: 0, message: error.message });
   } else {
     //si tous les champs sont ok, on fait un test d'unicité sur l'email
-    /*client.query(
-      "SELECT 1 as mail FROM users WHERE email='$1'",
+    console.log(req.body.email);
+    client.query(
+      "SELECT 1 as mail FROM users WHERE email=$1",
       [req.body.email],
       (err, result) => {
         if (err) {
+          console.log(err);
           return res.json({ ok: 0, message: err });
         }
         //si l'email est déjà utilisé on retourne un message d'erreur
@@ -201,6 +192,7 @@ app.post("/register", (req, res) => {
                 [req.body.lastname, req.body.firstname, req.body.email, hash],
                 (err) => {
                   if (err) {
+                    console.log(err);
                     return res.json({
                       ok: 0,
                       message: "Un problème est survenu lors de l'inscription",
@@ -217,45 +209,13 @@ app.post("/register", (req, res) => {
           });
         }
       }
-    );*/
-    const users = readUsers();
-    //on vérifie si l'email est déjà utilisé
-    if (users.some((user) => user.email === req.body.email)) {
-      //si oui on renvoi un message d'erreur
-      return res.json({ ok: 0, message: "Cet email est déjà utilisé" });
-    } else {
-      //sinon, on crypte le mot de passe
-      bcrypt.hash(req.body.password, 10, (err, hash) => {
-        if (err) {
-          return res.json({ ok: 0, message: err });
-        } else {
-          //si tous les tests sont passé on enregistre avec le mot de passe crypter
-          const id =
-            users.length > 0
-              ? Math.max(...users.map((user) => user.id)) + 1
-              : 1;
-          const newUser = {
-            id: id,
-            lastName: req.body.lastname.toUpperCase(),
-            firstName: req.body.firstname,
-            email: req.body.email,
-            password: hash,
-            isAbonne: 0,
-          };
-          // Ajoute le nouveau user dans le tableau d'users
-          users.push(newUser);
-          // Ecris dans le fichier pour insérer la liste des users
-          fs.writeFileSync("./users.json", JSON.stringify(users, null, 4));
-          res.json({ ok: 1, message: "L'utilisateur a bien été ajouté" });
-        }
-      });
-    }
+    );
   }
 });
 
 //chemin qui récupère les podcasts
 app.post("/podcasts/:theme_id", (req, res) => {
-  client.query(
+  /*client.query(
     "SELECT * FROM podcasts WHERE id_theme = '$1'",
     [req.params.theme_id],
     (err, result) => {
@@ -269,12 +229,12 @@ app.post("/podcasts/:theme_id", (req, res) => {
         return res.json({ ok: 1, message: result });
       }
     }
-  );
+  );*/
 });
 
 //chemin qui récupère les questions
 app.post("/questions/:theme_id", (req, res) => {
-  client.query(
+  /*client.query(
     "SELECT * FROM questions WHERE id_theme = '$1'",
     [req.params.theme_id],
     (err, result) => {
@@ -288,12 +248,43 @@ app.post("/questions/:theme_id", (req, res) => {
         return res.json({ ok: 1, message: result });
       }
     }
-  );
+  );*/
+  const questions = readQuestions();
+  const questions_selected = [];
+  if (questions.length) {
+    questions.forEach((question) => {
+      if (req.params.theme_id === question.id_theme) {
+        questions_selected = questions_selected.concat(question);
+      }
+    });
+  }
+  return res.json(questions_selected);
+});
+
+//chemin qui créé une question
+app.post("/question", (req, res) => {
+  const questions = readQuestions();
+  const id =
+    questions.length > 0
+      ? Math.max(...questions.map((question) => question.id)) + 1
+      : 1;
+  const newQuestion = {
+    id: id,
+    content: req.body.content,
+    date_created: Math.round(Date.now() / 1000),
+    id_author: req.body.user_id,
+    id_theme: req.body.theme_id,
+  };
+  // Ajoute la nouvelle question dans le tableau
+  questions.push(newQuestion);
+  // Ecris dans le fichier pour insérer la liste des questions
+  fs.writeFileSync("./questions.json", JSON.stringify(questions, null, 4));
+  res.json({ ok: 1, message: "La question a bien été ajoutée" });
 });
 
 //chemin qui récupère les réponses
-app.post("/answers/:question_id", (req, res) => {
-  client.query(
+app.get("/answers", (req, res) => {
+  /*client.query(
     "SELECT * FROM answers WHERE id_question = '$1'",
     [req.params.question_id],
     (err, result) => {
@@ -307,12 +298,36 @@ app.post("/answers/:question_id", (req, res) => {
         return res.json({ ok: 1, message: result });
       }
     }
-  );
+  );*/
+  const answers = readAnswers();
+  return res.send(answers);
+});
+
+//chemin qui créé une réponse
+app.post("/answer", (req, res) => {
+  const answers = readAnswers();
+  const id =
+    answers.length > 0
+      ? Math.max(...answers.map((answer) => answer.id)) + 1
+      : 1;
+  const newAnswer = {
+    id: id,
+    content: req.body.content,
+    date_created: Math.round(Date.now() / 1000),
+    id_question: req.body.question_id,
+    id_author: req.body.user_id,
+    id_theme: req.body.theme_id,
+  };
+  // Ajoute la nouvelle question dans le tableau
+  answers.push(newAnswer);
+  // Ecris dans le fichier pour insérer la liste des questions
+  fs.writeFileSync("./answers.json", JSON.stringify(answers, null, 4));
+  res.json({ ok: 1, message: "La réponse a bien été ajoutée" });
 });
 
 //chemin qui récupère les thèmes
-app.post("/themes", (req, res) => {
-  client.query("SELECT * FROM themes", (err, result) => {
+app.get("/themes", (req, res) => {
+  /*client.query("SELECT * FROM themes", (err, result) => {
     if (err) {
       return res.json({
         ok: 0,
@@ -321,12 +336,9 @@ app.post("/themes", (req, res) => {
     } else {
       return res.json({ ok: 1, message: result });
     }
-  });
-});
-
-//chemin qui récupère les challenges
-app.post("/challenges", (req, res) => {
-  //sélectionner les dates de début et de fin
+  });*/
+  const themes = readThemes();
+  return res.send(themes);
 });
 
 const port = process.env.PORT || 3000;
