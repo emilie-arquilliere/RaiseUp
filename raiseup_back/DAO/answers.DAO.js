@@ -18,25 +18,21 @@ AnswersDAO.findAllByQuestion = (idQuestion, callback) => {
     "SELECT * FROM answers WHERE idQuestion=$1",
     [idQuestion],
     (err, resAnswers) => {
-      if (err) callback(null, err);
+      if (err) callback(err, null);
       else callback(null, resAnswers.rows);
     }
   );
 };
 //add one answer
 AnswersDAO.addOne = (body, callback) => {
+  //we get the date to which we add the question
+  const date = new Date();
   client.query(
     "INSERT INTO answers (content, dateAnswer, idQuestion, idAuthor, idTheme) VALUES ($1,$2,$3,$4,$5)",
-    [
-      req.body.answer,
-      req.body.date,
-      req.body.question,
-      req.body.author,
-      req.body.theme,
-    ],
+    [body.answer, date, body.question, body.author, body.theme],
     (err, resAnswer) => {
-      if (err) callback(null, err);
-      else callback(null, resAnswer);
+      if (err) callback(err, null);
+      else callback(null, { ok: 1 });
     }
   );
 };

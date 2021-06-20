@@ -15,7 +15,7 @@ client.connect();
 //findAll podcasts function
 PodcastsDAO.findAll = (callback) => {
   client.query("SELECT * FROM podcasts", (err, resPodcast) => {
-    if (err) callback(null, err);
+    if (err) callback(err, null);
     else callback(null, resPodcast.rows);
   });
 };
@@ -26,7 +26,7 @@ PodcastsDAO.findOne = (idPodcast, callback) => {
     "SELECT * FROM podcasts WHERE id=$1",
     [idPodcast],
     (err, resPodcast) => {
-      if (err) callback(null, err);
+      if (err) callback(err, null);
       else callback(null, resPodcast.rows);
     }
   );

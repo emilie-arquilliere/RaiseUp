@@ -17,26 +17,27 @@ client.connect();
 /*=====FUNCTIONS=====*/
 //register function
 UsersDAO.register = (body, callback) => {
-  //on crypte le mot de passe
+  //we encrypt the password
   bcrypt.hash(body.password, 10, (err, hash) => {
     if (err) {
-      callback(null, err);
+      callback(err, null);
     } else {
-      //on enregistre en BDD avec le mot de passe crypter
+      //we save in the database with the encrypted password
       client.query(
         "INSERT INTO users (lastname,firstname,email,password) VALUES ($1,$2,$3,$4)",
-        [req.body.lastname, req.body.firstname, req.body.email, hash],
+        [body.lastname, body.firstname, body.email, hash],
         (err, res) => {
           if (err) {
-            callback(null, err);
+            callback(err, null);
           } else {
-            callback(null, res);
+            callback(null, { ok: 1 });
           }
         }
       );
     }
   });
 };
+
 //data verification function
 UsersDAO.checkData = (body, callback) => {
   const schema = joi.object({
@@ -62,6 +63,7 @@ UsersDAO.checkData = (body, callback) => {
               err.message = "L'email n'est pas valide";
               break;
             default:
+              err.message = "L'email n'est pas valide";
               break;
           }
         });
@@ -82,6 +84,7 @@ UsersDAO.checkData = (body, callback) => {
                 "Le mot de passe doit contenir au moins 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial";
               break;
             default:
+              err.message = "Le mot de passe n'est pas valide";
               break;
           }
         });
@@ -96,9 +99,9 @@ UsersDAO.checkData = (body, callback) => {
 
   const { error } = schema.validate(body);
   if (error) {
-    console.error(error);
+    callback(null, { ok: 0, message: error.message });
   } else {
-    callback(null, 1);
+    callback(null, { ok: 1 });
   }
 };
 
@@ -108,15 +111,17 @@ UsersDAO.uniqueness = (email, callback) => {
     "SELECT 1 as mail FROM users WHERE email=$1",
     [email],
     (err, res) => {
-      //erreur lors de la requête
-      if (err) console.error(err);
-      //l'email est déjà utilisé
-      else if (res.mail) callback(null, 1);
-      //l'email n'est pas utilisé
-      else callback(null);
+      //error during the request
+      if (err) callback(err, null);
+      //the email is already in use
+      else if (res.rows.length > 0)
+        callback(null, { ok: 0, message: "Cet email est déjà utilisé" });
+      //email isn't used
+      else callback(null, { ok: 1 });
     }
   );
 };
+
 //connect function
 UsersDAO.connect = (body, callback) => {
   client.query(
@@ -124,23 +129,24 @@ UsersDAO.connect = (body, callback) => {
     [body.email],
     (err, result) => {
       if (err) {
-        callback(null, err);
+        callback(err, null);
       }
-      //si on a des résultats on vérifie le mot de passe
+      //if we have results we check the password
       else if (result.rows.length) {
-        //on vérifie si c'est le bon mot de passe
+        //we check if it is the right password
         if (result.rows[0].password) {
           bcrypt.compare(
-            req.body.password,
+            body.password,
             result.rows[0].password,
-            (err, result_hash) => {
-              if (err) {
-                callback(null, err);
+            (errBcrypt, resultHash) => {
+              if (errBcrypt) {
+                callback(errBcrypt, null);
               } else {
-                if (result_hash) {
-                  return res.json({
+                if (resultHash) {
+                  callback(null, {
                     ok: 1,
                     message: "Connexion effectuée avec succès",
+                    idUser: result.rows[0].id,
                     token: jwt.sign(
                       { idUser: result.rows[0].id },
                       "RANDOM_TOKEN_SECRET",
@@ -148,16 +154,19 @@ UsersDAO.connect = (body, callback) => {
                     ),
                   });
                 } else {
-                  callback(null, 0);
+                  callback(null, {
+                    ok: 0,
+                    message: "Email ou mot de passe invalide",
+                  });
                 }
               }
             }
           );
         }
       }
-      //si on a pas de résultat c'est que l'email n'existe pas en BDD
+      //if there's no result it means that the email doesn't exist in the database
       else {
-        callback(null, 0);
+        callback(null, { ok: 0, message: "Email ou mot de passe invalide" });
       }
     }
   );
@@ -165,10 +174,17 @@ UsersDAO.connect = (body, callback) => {
 
 //get one user function
 UsersDAO.findOne = (idUser, callback) => {
-  client.query("SELECT * FROM users WHERE id=$1", [idUser], (err, res) => {
-    if (err) callback(null, err);
-    else callback(null, res.rows);
-  });
+  client.query(
+    "SELECT lastname, firstname, email FROM users WHERE id=$1",
+    [idUser],
+    (err, res) => {
+      if (err) {
+        callback(err, null);
+      } else {
+        callback(null, res.rows);
+      }
+    }
+  );
 };
 
 //modify user name function
@@ -177,32 +193,34 @@ UsersDAO.modifyName = (body, callback) => {
     "UPDATE users SET lastname=$1, firstname=$2 WHERE id=$3",
     [body.lastname, body.firstname, body.idUser],
     (err, resModify) => {
-      if (err) callback(null, err);
-      else callback(null, resModify);
+      if (err) callback(err, null);
+      else callback(null, { ok: 1 });
     }
   );
 };
 
 //modify user password function
 UsersDAO.modifyPassword = (body, callback) => {
-  //on vérifie si l'ancien password est correct
+  //we check if the old password is correct
   client.query(
     "SELECT password FROM users WHERE id=$1",
     [body.idUser],
-    (err, res) => {
+    (err, result) => {
       if (err) {
-        callback(null, err);
+        callback(err, null);
       } else {
         bcrypt.compare(
-          req.body.password,
+          body.old_password,
           result.rows[0].password,
           (err, result_hash) => {
             if (err) {
-              callback(null, err);
+              callback(err, null);
             } else {
               if (result_hash) {
-                //on vérifie le nouveau mot de passe
+                //we check the new password
                 const schema = joi.object({
+                  idUser: joi.required(),
+                  old_password: joi.required(),
                   password: joi
                     .string()
                     .pattern(new RegExp(process.env.REGEX_PWD))
@@ -218,6 +236,7 @@ UsersDAO.modifyPassword = (body, callback) => {
                               "Le mot de passe doit contenir au moins 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial";
                             break;
                           default:
+                            err.message = "Le mot de passe n'est pas valide";
                             break;
                         }
                       });
@@ -232,27 +251,28 @@ UsersDAO.modifyPassword = (body, callback) => {
 
                 const { error } = schema.validate(body);
                 if (error) {
-                  callback(null, error);
+                  callback(null, { ok: 0, message: error.message });
                 } else {
-                  //on chiffre le nouveau mot de passe
-                  bcrypt.hash(body.password, 10, (err, hash) => {
-                    if (err) {
-                      callback(null, err);
+                  //we encrypt the new password
+                  bcrypt.hash(body.password, 10, (errBcrypt, hash) => {
+                    if (errBcrypt) {
+                      callback(errBcrypt, null);
                     } else {
-                      //on modifie le mot de passe en base
+                      //change the password in the database
                       client.query(
-                        "UPDATE users SET password=$1 WHERE id=$3",
-                        [body.lastname, body.firstname, body.idUser],
-                        (err, resModify) => {
-                          if (err) callback(null, err);
-                          else callback(null, resModify);
+                        "UPDATE users SET password=$1 WHERE id=$2",
+                        [hash, body.idUser],
+                        (errUpdate, resModify) => {
+                          if (errUpdate) {
+                            callback(errUpdate, null);
+                          } else callback(null, { ok: 1 });
                         }
                       );
                     }
                   });
                 }
               } else {
-                callback(null, 0);
+                callback(null, { ok: 0, message: "Mot de passe incorrect" });
               }
             }
           }

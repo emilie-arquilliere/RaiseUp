@@ -18,7 +18,7 @@ QuestionsDAO.findAll = (idTheme, callback) => {
     "SELECT * FROM questions WHERE idTheme=$1",
     [idTheme],
     (err, resQuestions) => {
-      if (err) callback(null, err);
+      if (err) callback(err, null);
       else callback(null, resQuestions.rows);
     }
   );
@@ -26,12 +26,15 @@ QuestionsDAO.findAll = (idTheme, callback) => {
 
 //add a question function
 QuestionsDAO.addOne = (body, callback) => {
+  //we get the date to which we add the question
+  const date = new Date();
   client.query(
     "INSERT INTO questions (content, dateQuestion, idAuthor, idTheme) VALUES ($1,$2,$3,$4)",
-    [body.question, body.date, body.author, body.theme],
+    [body.question, date, body.author, body.theme],
     (err, resQuestion) => {
-      if (err) callback(null, err);
-      else callback(null, resQuestion.rows);
+      if (err) {
+        callback(err, null);
+      } else callback(null, { ok: 1 });
     }
   );
 };

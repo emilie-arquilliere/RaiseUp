@@ -14,10 +14,13 @@ client.connect();
 /*=====FUNCTIONS=====*/
 //get month theme
 ThemesDAO.findOne = (callback) => {
-  client.query("SELECT * FROM themes WHERE isMonthTheme = 1", (err, res) => {
-    if (err) callback(null, err);
-    else callback(null, res.rows);
-  });
+  client.query(
+    "SELECT title FROM themes WHERE isMonthTheme = 1",
+    (err, res) => {
+      if (err) callback(err, null);
+      else callback(null, res.rows);
+    }
+  );
 };
 
 module.exports = ThemesDAO;

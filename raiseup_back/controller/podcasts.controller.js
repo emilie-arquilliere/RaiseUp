@@ -12,7 +12,7 @@ PodcastsController.findAll = (req, res) => {
 };
 //get one podcast
 PodcastsController.findOne = (req, res) => {
-  const idPodcast = req.params.idPodcast;
+  const idPodcast = req.body.idPodcast;
   //call service
   PodcastsService.findOne(idPodcast, (err, resPodcast) => {
     if (resPodcast) res.status(200).send(resPodcast);

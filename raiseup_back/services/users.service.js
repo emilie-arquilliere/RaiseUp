@@ -4,22 +4,25 @@ const UsersDAO = require("../DAO/users.DAO");
 /*=====FUNCTIONS=====*/
 //register function
 UsersService.register = (body, callback) => {
-  //on vérifie les informations saisies
+  //we check the information entered
   UsersDAO.checkData(body, (errCheck, resCheck) => {
     if (errCheck) {
-      return errCheck;
-    } else {
-      //on vérifie l'unicité de l'email
+      callback(errCheck, null);
+    } else if (resCheck.ok === 1) {
+      //we check the uniqueness of the email
       UsersDAO.uniqueness(body.email, (errUnique, resUnique) => {
         if (errUnique) {
-          return errUnique;
-        } else if (resUnique != 0) {
-          return 0;
+          callback(errUnique, null);
+        } else if (resUnique.ok === 0) {
+          //not unique
+          callback(null, resUnique);
         } else {
-          //on enregistre le user
+          //unique, we register the user
           UsersDAO.register(body, callback);
         }
       });
+    } else if (resCheck.ok === 0) {
+      callback(null, resCheck);
     }
   });
 };

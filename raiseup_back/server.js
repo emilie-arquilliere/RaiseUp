@@ -20,26 +20,26 @@ app.post("/register", UsersController.register);
 //connect function
 app.post("/connect", UsersController.connect);
 //findOne function
-app.post("/findOne", auth, UsersController.findOne);
+app.post("/user", auth, UsersController.findOne);
 //modify user name function
-app.post("/modifyName", auth, UsersController.modifyName);
+app.post("/name", auth, UsersController.modifyName);
 //modify user password function
-app.post("/modifyPassword", auth, UsersController.modifyPassword);
+app.post("/password", UsersController.modifyPassword);
 
 /*======QUESTIONS FUNCTIONS======*/
-app.post("/questions/:idTheme", auth, QuestionsController.findAll);
-app.post("/questions", auth, QuestionsController.addOne);
+app.post("/questions", QuestionsController.findAll);
+app.post("/question", auth, QuestionsController.addOne);
 
 /*======ANSWERS FUNCTIONS======*/
-app.post("/answers/:idQuestion", auth, AnswersController.findAllByQuestion);
-app.post("/answers", auth, AnswersController.addOne);
+app.post("/answers", auth, AnswersController.findAllByQuestion);
+app.post("/answer", auth, AnswersController.addOne);
 
 /*======PODCASTS FUNCTIONS======*/
 app.post("/podcasts", auth, PodcastsController.findAll);
-app.post("/podcasts/:idPodcast", auth, PodcastsController.findOne);
+app.post("/podcast", PodcastsController.findOne);
 
 /*======THEMES FUNCTION======*/
-app.post("/themes", ThemesController.findOne);
+app.get("/themes", ThemesController.findOne);
 
 //lancement du serveur
 const port = process.env.PORT || 3000;
