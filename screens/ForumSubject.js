@@ -13,9 +13,15 @@ import { Avatar } from "react-native-elements/dist/avatar/Avatar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faAngleDoubleRight } from "@fortawesome/free-solid-svg-icons";
+import TopLeft from "../component/viewDesign/TopLeft";
+import MiddleRight from "../component/viewDesign/MiddleRight";
+import BottomLeft from "../component/viewDesign/BottomLeft";
+import BtnCTA from "../component/BtnCTA";
+import { useFonts } from "expo-font";
 
 export default function ForumPage({ navigation }) {
   const theme = "La peur";
+
   const [questions, setQuestions] = useState([
     "Comment se débarasser de sa peur ?",
     "Je suis toujours angoissé, comment faire pour arrêter ?",
@@ -27,33 +33,27 @@ export default function ForumPage({ navigation }) {
     "reponse4",
   ]);
 
+  const [loaded] = useFonts({
+    VarelaRound: require("../assets/font/VarelaRound-Regular.ttf"),
+  });
+
+  if (!loaded) {
+    return null;
+  } 
+
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require("../assets/images/fond_noir.png")}
-        style={styles.fondNoir}
-      >
-        <IconProfil navigation={navigation} />
-        <PageTitle content={"Forum"} />
-        <View style={styles.contour}>
-          <View style={styles.interieur}>
-            <Text
-              style={{
-                color: "white",
-                fontWeight: "bold",
-                marginBottom: 10,
-              }}
-            >
-              Le thème de la semaine
-            </Text>
-            <Text style={{ color: "white" }}>{theme}</Text>
-          </View>
+      <TopLeft/>
+      <MiddleRight/>
+      <BottomLeft/>
+      <IconProfil navigation={navigation} />
+      <PageTitle content={"Forum"} />
+      <View style={styles.content}>
+        <View style={styles.viewSubject}>
+          <Text style={styles.subject}>Topic : {theme}</Text>
         </View>
-        <TouchableOpacity
-          style={styles.viewBtnNav}
-          onPress={() => navigation.navigate("CreateSubject")}
-        >
-          <Text style={styles.btnNav}>Créer un sujet</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("CreateSubject")}>
+          <BtnCTA text={"Créer un sujet"} />
         </TouchableOpacity>
         <View style={{ width: "100%", height: "60%" }}>
           <KeyboardAwareScrollView
@@ -123,7 +123,7 @@ export default function ForumPage({ navigation }) {
             ))}
           </KeyboardAwareScrollView>
         </View>
-      </ImageBackground>
+      </View>
     </View>
   );
 }
@@ -131,9 +131,32 @@ export default function ForumPage({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
+    backgroundColor:"#f7e4ff",
     width: "100%",
     height: "100%",
   },
+  content:{
+    justifyContent:"center",
+    alignItems:"center",
+    width:"100%",
+    alignSelf:"center",
+  },
+  viewSubject:{
+    width:"100%",
+    height:"10%",
+    backgroundColor:"#D77AFF",
+    justifyContent:"center",
+    marginTop:"30%",
+    marginBottom:10
+  },
+  subject:{
+    color:"white",
+    textAlign:"center",
+    fontFamily: "VarelaRound",
+    fontSize:20
+  },
+
+
   input: {
     backgroundColor: "white",
     borderWidth: 1,
@@ -143,44 +166,6 @@ const styles = StyleSheet.create({
     height: "30%",
     padding: 15,
     marginBottom: 20,
-  },
-  fondNoir: {
-    resizeMode: "cover",
-    height: "100%",
-    alignItems: "center",
-  },
-  contour: {
-    borderTopColor: "black",
-    borderBottomColor: "black",
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    width: "80%",
-    height: "11%",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: "40%",
-  },
-  interieur: {
-    width: "90%",
-    height: "90%",
-    backgroundColor: "#2c4645",
-    borderRadius: 15,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  viewBtnNav: {
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  btnNav: {
-    overflow: "hidden",
-    borderRadius: 25,
-    backgroundColor: "#D3FCF7",
-    textAlign: "center",
-    padding: 15,
-    margin: 10,
   },
   ensemble: {
     marginTop: 10,

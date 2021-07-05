@@ -3,9 +3,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import PodcastsPage from "../screens/PodcastsPage";
 import AccueilPage from "../screens/AccueilPage";
 import ForumPage from "../screens/ForumPage";
-import CreateSubject from "../component/CreateSubject";
-import PlayPodcast from "../component/PlayPodcast";
-import ForumSubject from "../component/ForumSubject";
+import CreateSubject from "../screens/CreateSubject";
+import PlayPodcast from "../screens/PlayPodcast";
+import ForumSubject from "../screens/ForumSubject";
 import ProfilPage from "../screens/ProfilPage";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -14,6 +14,7 @@ import {
   faCalendarAlt,
   faComments,
 } from "@fortawesome/free-solid-svg-icons";
+import { color } from "react-native-reanimated";
 
 const Tab = createBottomTabNavigator();
 
@@ -30,8 +31,6 @@ export default function Menu() {
             iconName = faPodcast;
           } else if (route.name === "Forum") {
             iconName = faComments;
-          } else if (route.name === "Event") {
-            iconName = faCalendarAlt;
           } else {
             iconName = faHome;
           }
@@ -40,10 +39,10 @@ export default function Menu() {
         },
       })}
       tabBarOptions={{
-        showLabel: false,
+        showLabel:false,
         style: {
-          backgroundColor: "#BD7B49",
-        },
+          backgroundColor: "#724997"
+        }
       }}
     >
       <Tab.Screen name="Accueil" component={AccueilPage} />

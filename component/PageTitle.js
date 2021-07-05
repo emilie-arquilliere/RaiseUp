@@ -4,7 +4,7 @@ import { useFonts } from "expo-font";
 
 export default function PageTitle({ content }) {
   const [loaded] = useFonts({
-    CormorantGaramond: require("../assets/font/CormorantGaramond-Bold.ttf"),
+    VarelaRound: require("../assets/font/VarelaRound-Regular.ttf"),
   });
 
   if (!loaded) {
@@ -21,6 +21,6 @@ const styles = StyleSheet.create({
     left: "10%",
     fontSize: 20,
     fontWeight: "bold",
-    fontFamily: "CormorantGaramond",
+    fontFamily: "VarelaRound",
   },
 });

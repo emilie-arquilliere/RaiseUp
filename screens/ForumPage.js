@@ -1,84 +1,65 @@
 import React from "react";
-import { StyleSheet, Text, View, ImageBackground } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import IconProfil from "../component/IconProfil";
 import PageSubitle from "../component/PageSubtitle";
 import PageTitle from "../component/PageTitle";
+import MiddleRight from "../component/viewDesign/MiddleRight";
+import TopLeft from "../component/viewDesign/TopLeft";
+import BottomLeft from "../component/viewDesign/BottomLeft";
+import { useFonts } from "expo-font";
+import BtnCTA from "../component/BtnCTA";
 
 export default function ForumPage({ navigation }) {
   const titre = "La peur";
+
+  const [loaded] = useFonts({
+    VarelaRound: require("../assets/font/VarelaRound-Regular.ttf"),
+  });
+
+  if (!loaded) {
+    return null;
+  } 
+
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require("../assets/images/fond_noir.png")}
-        style={styles.fondNoir}
-      >
-        <IconProfil navigation={navigation} />
-        <PageTitle content={"Forum"} />
-        <Text
-          style={{
-            width: "90%",
-            textAlign: "justify",
-            marginTop: "30%",
-            marginBottom: 10,
-          }}
-        >
+      <TopLeft/>
+      <MiddleRight/>
+      <BottomLeft/>
+      <IconProfil navigation={navigation} />
+      <PageTitle content={"Forum"} />
+      <View style={styles.content}>
+        <Text style={styles.text} >
           Pour devenir la meilleure version de toi même, échange avec la
           communauté sur le thème de la semaine ! L'entraide est le début de
           l'élévation.
         </Text>
-        <TouchableOpacity
-          style={styles.viewBtnNav}
-          onPress={() => navigation.navigate("CreateSubject")}
-        >
-          <Text style={styles.btnNav}>Créer un sujet</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("CreateSubject")}>
+          <BtnCTA text={"Créer un sujet"} />
         </TouchableOpacity>
         <PageSubitle content="Les Topics les plus actifs" />
         <View style={{ width: "95%", height: "25%", alignItems: "center" }}>
           <ScrollView horizontal style={{ width: "90%", padding: 10 }}>
             <TouchableOpacity
-              style={{
-                height: "100%",
-                alignItems: "center",
-              }}
+              style={styles.choice}
               onPress={() => navigation.navigate("ForumSubject")}
             >
-              <ImageBackground
-                source={require("../assets/images/livre.jpg")}
-                style={{
-                  width: 150,
-                  height: "90%",
-                  resizeMode: "contain",
-                }}
-              ></ImageBackground>
-              <Text style={{ fontWeight: "bold" }}>{titre}</Text>
+              <Text style={styles.subject}>{titre}</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>
-
         <PageSubitle content="Les Topics du forum RaiseUp" />
         <View style={{ width: "95%", height: "25%", alignItems: "center" }}>
           <ScrollView horizontal style={{ width: "90%", padding: 10 }}>
             <TouchableOpacity
-              style={{
-                height: "100%",
-                alignItems: "center",
-              }}
+              style={styles.choice}
               onPress={() => navigation.navigate("ForumSubject")}
             >
-              <ImageBackground
-                source={require("../assets/images/livre.jpg")}
-                style={{
-                  width: 150,
-                  height: "90%",
-                  resizeMode: "contain",
-                }}
-              ></ImageBackground>
-              <Text style={{ fontWeight: "bold" }}>{titre}</Text>
+              <Text style={styles.subject}>{titre}</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>
-      </ImageBackground>
+      </View>
     </View>
   );
 }
@@ -86,48 +67,34 @@ export default function ForumPage({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
+    backgroundColor:"#f7e4ff",
     width: "100%",
     height: "100%",
   },
-  item: {
-    textAlign: "center",
-    padding: 10,
-    fontSize: 20,
+  content:{
+    justifyContent:"center",
+    alignItems:"center",
+    width:"90%",
+    alignSelf:"center",
   },
-  fondNoir: {
-    resizeMode: "cover",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
+  text:{
+    width: "90%",
+    textAlign: "justify",
+    marginTop: "30%",
+    marginBottom: 10,
+    fontFamily: "VarelaRound",
   },
-  viewBtnNav: {
-    position: "absolute",
-    bottom: "5%",
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+  choice:{
+    borderRadius:10,
+    width:140,
+    height:"90%",
+    backgroundColor:"#D77AFF",
+    justifyContent:"center",
+    alignItems:"center"
   },
-  btnNav: {
-    overflow: "hidden",
-    borderRadius: 25,
-    backgroundColor: "#D3FCF7",
-    textAlign: "center",
-    padding: 15,
-    margin: 10,
-  },
-  viewBtnNav: {
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  btnNav: {
-    overflow: "hidden",
-    borderRadius: 25,
-    backgroundColor: "#D3FCF7",
-    textAlign: "center",
-    padding: 15,
-    margin: 10,
-  },
+  subject:{
+    fontFamily: "VarelaRound",
+    color:"white",
+    fontSize:15
+  }
 });

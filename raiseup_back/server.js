@@ -22,9 +22,9 @@ app.post("/connect", UsersController.connect);
 //findOne function
 app.post("/user", auth, UsersController.findOne);
 //modify user name function
-app.post("/name", auth, UsersController.modifyName);
+app.put("/name", auth, UsersController.modifyName);
 //modify user password function
-app.post("/password", UsersController.modifyPassword);
+app.put("/password", UsersController.modifyPassword);
 
 /*======QUESTIONS FUNCTIONS======*/
 app.post("/questions", QuestionsController.findAll);

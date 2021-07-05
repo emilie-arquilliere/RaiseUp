@@ -1,34 +1,29 @@
 import React from "react";
-import { StyleSheet, View, ImageBackground, Text } from "react-native";
+import { StyleSheet, View, Image, Text } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import IconProfil from "../component/IconProfil";
 import PageSubitle from "../component/PageSubtitle";
 import PageTitle from "../component/PageTitle";
+import MiddleLeft from "../component/viewDesign/MiddleLeft";
+import TopRight from "../component/viewDesign/TopRight";
+import MiddleRightBottom from "../component/viewDesign/MiddleRightBottom";
 
 export default function PodcastsPage({ navigation }) {
   const titre = "La peur";
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require("../assets/images/fond_noir.png")}
-        style={styles.fondNoir}
-      >
-        <IconProfil navigation={navigation} />
-        <PageTitle content={"Podcast"} />
-        <View
-          style={{
-            width: "100%",
-            height: "25%",
-            marginTop: "35%",
-            marginBottom: 15,
-          }}
-        >
-          <ImageBackground
+      <TopRight/>
+      <MiddleLeft/>
+      <MiddleRightBottom/>
+      <IconProfil navigation={navigation} />
+      <PageTitle content={"Podcast"} />
+      <View style={styles.content}>
+        <View style={styles.viewBigPic}>
+          <Image
             source={require("../assets/images/respirer.jpg")}
-            style={{ width: "100%", height: "100%" }}
-          ></ImageBackground>
+            style={styles.bigPic}
+          />
         </View>
-
         <PageSubitle content="Derniers podcasts écoutés" />
         <View style={{ width: "95%", height: "25%", alignItems: "center" }}>
           <ScrollView horizontal style={{ width: "90%", padding: 10 }}>
@@ -39,14 +34,10 @@ export default function PodcastsPage({ navigation }) {
               }}
               onPress={() => navigation.navigate("PlayPodcast")}
             >
-              <ImageBackground
+              <Image
                 source={require("../assets/images/livre.jpg")}
-                style={{
-                  width: 150,
-                  height: "90%",
-                  resizeMode: "contain",
-                }}
-              ></ImageBackground>
+                style={styles.littlePic}
+              />
               <Text style={{ fontWeight: "bold" }}>{titre}</Text>
             </TouchableOpacity>
           </ScrollView>
@@ -54,25 +45,20 @@ export default function PodcastsPage({ navigation }) {
         <PageSubitle content="Les podcasts de RaiseUp" />
         <View style={{ width: "95%", height: "25%", alignItems: "center" }}>
           <ScrollView horizontal style={{ width: "90%", padding: 10 }}>
-            <View
+            <TouchableOpacity
               style={{
                 height: "100%",
                 alignItems: "center",
               }}
+              onPress={() => navigation.navigate("PlayPodcast")}
             >
-              <ImageBackground
-                source={require("../assets/images/livre.jpg")}
-                style={{
-                  width: 150,
-                  height: "90%",
-                  resizeMode: "contain",
-                }}
-              ></ImageBackground>
+              <Image  source={require("../assets/images/livre.jpg")}
+                style={styles.littlePic}/>
               <Text style={{ fontWeight: "bold" }}>{titre}</Text>
-            </View>
+            </TouchableOpacity>
           </ScrollView>
         </View>
-      </ImageBackground>
+      </View>
     </View>
   );
 }
@@ -80,18 +66,34 @@ export default function PodcastsPage({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
+    backgroundColor:"#f7e4ff",
     width: "100%",
     height: "100%",
   },
-  item: {
-    textAlign: "center",
-    padding: 10,
-    fontSize: 78,
+  content:{
+    justifyContent:"center",
+    alignItems:"center",
+    width:"100%",
+    alignSelf:"center",
   },
-  fondNoir: {
+  viewBigPic:{
+    width: "100%",
+    height: "20%",
+    marginTop:"35%",
+    marginBottom:10
+  },
+  bigPic:{
+    position:"absolute",
+    right:0,
+    borderBottomLeftRadius:10,
+    borderTopLeftRadius:10,
+    width:"80%",
+    height:"100%"
+  },
+  littlePic:{
+    width: 150,
+    height: "90%",
     resizeMode: "cover",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+    borderRadius:10,
+  }
 });

@@ -30,6 +30,27 @@ UsersDAO.register = (body, callback) => {
           if (err) {
             callback(err, null);
           } else {
+            //we get his id and we connect him
+            client.query(
+              "SELECT id FROM users WHERE email=$1",
+              [body.email],
+              (err, result) => {
+                if (err) {
+                  callback(err, null);
+                } else {
+                  callback(null, {
+                    ok: 1,
+                    message: "Inscription effectuée avec succès",
+                    idUser: result.rows[0].id,
+                    token: jwt.sign(
+                      { idUser: result.rows[0].id },
+                      "RANDOM_TOKEN_SECRET",
+                      { expiresIn: "24h" }
+                    ),
+                  });
+                }
+              }
+            );
             callback(null, { ok: 1 });
           }
         }
